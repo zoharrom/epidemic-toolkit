@@ -2,7 +2,7 @@
 
 A small full-stack toolkit for simulating and calibrating compartmental epidemic models (SIR/SEIR): hand-written numerical integrators, a real-data calibration pipeline, a FastAPI backend, and a vanilla JS frontend where you can build your own epidemic curve.
 
-**Live demo: [epidemic-toolkit.onrender.com](https://epidemic-toolkit.onrender.com)** (free hosting — the first load may take 30-50 seconds if it's been idle)
+**Live demo: [epidemic-toolkit.onrender.com](https://epidemic-toolkit.onrender.com)** (hosted free — please allow a few seconds for the first load)
 
 ## What it does
 
