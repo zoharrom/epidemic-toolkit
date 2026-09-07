@@ -2,12 +2,14 @@
 
 A small full-stack toolkit for simulating and calibrating compartmental epidemic models (SIR/SEIR): hand-written numerical integrators, a real-data calibration pipeline, a FastAPI backend, and a vanilla JS frontend where you can build your own epidemic curve.
 
+**Live demo: [epidemic-toolkit.onrender.com](https://epidemic-toolkit.onrender.com)** (free hosting — the first load may take 30-50 seconds if it's been idle)
+
 ## What it does
 
 - **Build your own epidemic curve** — move sliders for the transmission rate (β), incubation rate (σ), and recovery rate (γ), and watch a live SEIR simulation update. A banner explains what's happening to R0 as you go, including why the outbreak dies out when R0 < 1.
 - **See a real calibrated example** — beta and gamma fitted via `scipy.optimize.curve_fit` against a real 1978 English boarding-school influenza outbreak, plotted against the actual observed case counts.
 
-Run it locally (see [Setup](#setup)) and open `http://127.0.0.1:8000/`.
+Try it live at the link above, or run it locally (see [Setup](#setup)) and open `http://127.0.0.1:8000/`.
 
 ## The Math
 
