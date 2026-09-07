@@ -1,0 +1,97 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Epidemic Modeling Toolkit</title>
+  <link rel="stylesheet" href="style.css" />
+  <script src="https://cdn.jsdelivr.net/npm/chart.js@4/dist/chart.umd.min.js"></script>
+</head>
+<body>
+  <h1>Epidemic Modeling Toolkit</h1>
+  <p class="subtitle">Build your own SEIR epidemic curve, or compare against a real historical outbreak.</p>
+
+  <section class="intro">
+    <p>
+      The SEIR model splits a population into four groups: <strong>S</strong>usceptible (not yet infected),
+      <strong>E</strong>xposed (infected, but not yet contagious &mdash; the incubation period),
+      <strong>I</strong>nfectious (infected and able to spread the disease), and <strong>R</strong>ecovered (no
+      longer infectious). It extends the simpler SIR model by explicitly modeling that incubation delay.
+    </p>
+    <p>
+      That extra compartment matters most for diseases with a real incubation period relative to how fast an
+      outbreak unfolds &mdash; for example <strong>measles</strong> (~10&ndash;12 days), <strong>COVID-19</strong>
+      (~5&ndash;6 days), <strong>chickenpox</strong> (~2 weeks), and <strong>mumps</strong> (~2&ndash;3 weeks). It
+      fits less well for diseases that spread faster than a realistic incubation delay allows the model to
+      represent &mdash; see the flu example below, where that mismatch shows up directly in the fitted parameters.
+    </p>
+  </section>
+
+  <section class="panel">
+    <h2>Build your own epidemic curve</h2>
+
+    <div class="controls">
+      <div class="control">
+        <label for="population">Population (N)</label>
+        <input type="number" id="population" min="10" max="1000000" value="763" />
+      </div>
+      <div class="control">
+        <label for="exposed0">Initial exposed (E&#8320;)</label>
+        <input type="number" id="exposed0" min="0" max="100000" value="3" />
+      </div>
+      <div class="control">
+        <label for="beta">Transmission rate (&beta;): <span id="beta-value">0.30</span></label>
+        <input type="range" id="beta" min="0.01" max="3" step="0.01" value="0.30" />
+      </div>
+      <div class="control">
+        <label for="sigma">Incubation rate (&sigma;): <span id="sigma-value">0.50</span></label>
+        <input type="range" id="sigma" min="0.05" max="2" step="0.01" value="0.50" />
+      </div>
+      <div class="control">
+        <label for="gamma">Recovery rate (&gamma;): <span id="gamma-value">0.10</span></label>
+        <input type="range" id="gamma" min="0.05" max="2" step="0.01" value="0.10" />
+      </div>
+      <div class="control">
+        <label for="days">Days to simulate: <span id="days-value">90</span></label>
+        <input type="range" id="days" min="10" max="150" step="1" value="90" />
+      </div>
+    </div>
+
+    <div id="r0-banner" class="r0-banner"></div>
+
+    <canvas id="simulation-chart" height="320"></canvas>
+  </section>
+
+  <section class="panel">
+    <h2>Real-world example: 1978 boarding-school flu outbreak</h2>
+    <p>
+      SEIR's beta and gamma fitted via <code>scipy.optimize.curve_fit</code> against the
+      real "boys in bed" counts from a 1978 English boarding-school influenza outbreak.
+    </p>
+
+    <div class="info-box">
+      <strong>Published influenza parameters:</strong> an incubation period of roughly 1&ndash;4 days (about 2 days
+      on average &mdash; the fixed value used here), an infectious period of about 4&ndash;6 days, and a basic
+      reproduction number (R0) typically between about 1.2 and 1.4 in community settings (still under 2 even for
+      past pandemic strains).
+    </div>
+
+    <div id="calibration-summary" class="calibration-summary">Loading fit&hellip;</div>
+
+    <div class="info-box warn">
+      <strong>Why the fitted R0 above is so much higher:</strong> the incubation rate (&sigma;) is held fixed
+      rather than estimated, and this particular outbreak's case count rose extremely fast &mdash; from 3 to 298
+      students in bed within 5 days. To reproduce that rise while stuck with a realistic ~2-day incubation delay,
+      the fit has to inflate &beta; far beyond a plausible transmission rate to compensate. The result fits the
+      observed curve well numerically, but the individual fitted parameters &mdash; especially R0 &mdash;
+      shouldn't be read as real biological estimates. This is a known, documented consequence of fixing one
+      parameter while fitting the others, not a bug.
+    </div>
+
+    <canvas id="calibration-chart" height="320"></canvas>
+    <p class="data-source">Data: "Influenza in a boarding school," British Medical Journal, 4 March 1978.</p>
+  </section>
+
+  <script src="app.js"></script>
+</body>
+</html>
