@@ -13,6 +13,9 @@ const els = {
   daysValue: document.getElementById("days-value"),
   r0Banner: document.getElementById("r0-banner"),
   calibrationSummary: document.getElementById("calibration-summary"),
+  statPeak: document.getElementById("stat-peak"),
+  statAttackRate: document.getElementById("stat-attack-rate"),
+  statHerdImmunity: document.getElementById("stat-herd-immunity"),
 };
 
 function debounce(fn, delayMs) {
@@ -64,6 +67,15 @@ function initSimulationChart() {
         { label: "Exposed", data: [], borderColor: "#e2a33a", pointRadius: 0 },
         { label: "Infectious", data: [], borderColor: "#d64545", pointRadius: 0 },
         { label: "Recovered", data: [], borderColor: "#3fa85c", pointRadius: 0 },
+        {
+          label: "Peak",
+          data: [],
+          borderColor: "#1c2333",
+          backgroundColor: "#1c2333",
+          showLine: false,
+          pointRadius: 6,
+          pointStyle: "triangle",
+        },
       ],
     },
     options: {
@@ -78,11 +90,35 @@ function initSimulationChart() {
   });
 }
 
+function updateStats(data, n, beta, gamma) {
+  const infectious = data.compartments.I;
+  let peakIndex = 0;
+  for (let i = 1; i < infectious.length; i++) {
+    if (infectious[i] > infectious[peakIndex]) {
+      peakIndex = i;
+    }
+  }
+  const peakDay = Math.round(data.t[peakIndex]);
+  const peakCount = Math.round(infectious[peakIndex]);
+  els.statPeak.textContent = `Day ${peakDay}, ${peakCount.toLocaleString()} people`;
+
+  const finalSusceptible = data.compartments.S[data.compartments.S.length - 1];
+  const attackRate = ((n - finalSusceptible) / n) * 100;
+  els.statAttackRate.textContent = `${attackRate.toFixed(1)}%`;
+
+  const r0 = beta / gamma;
+  els.statHerdImmunity.textContent =
+    r0 > 1 ? `${((1 - 1 / r0) * 100).toFixed(1)}%` : "Not needed (R0 ≤ 1)";
+
+  return { x: data.t[peakIndex], y: infectious[peakIndex] };
+}
+
 async function runSimulation() {
+  const requestBody = simulationRequestBody();
   const response = await fetch("/simulate", {
     method: "POST",
     headers: { "Content-Type": "application/json" },
-    body: JSON.stringify(simulationRequestBody()),
+    body: JSON.stringify(requestBody),
   });
   if (!response.ok) {
     return;
@@ -94,6 +130,11 @@ async function runSimulation() {
   simulationChart.data.datasets[1].data = toPoints(data.compartments.E);
   simulationChart.data.datasets[2].data = toPoints(data.compartments.I);
   simulationChart.data.datasets[3].data = toPoints(data.compartments.R);
+
+  const n = requestBody.s0 + requestBody.e0 + requestBody.i0 + requestBody.r0;
+  const peakPoint = updateStats(data, n, requestBody.beta, requestBody.gamma);
+  simulationChart.data.datasets[4].data = [peakPoint];
+
   simulationChart.update();
 }
 

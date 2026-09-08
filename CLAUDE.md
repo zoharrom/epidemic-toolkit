@@ -61,6 +61,8 @@ Two independent charts: an interactive "build your own epidemic curve" SEIR simu
 
 R0 (= beta / gamma) is computed client-side in `app.js` and shown live as sliders move. When R0 < 1, a banner explains that the outbreak cannot sustain itself and will die out — the simulation still runs and is shown (a dying-out curve is a valid, informative result), the banner is purely explanatory, not a validation error.
 
+Three derived stats update alongside the interactive chart, all computed client-side from the `/simulate` response (no new backend logic needed): peak infection day/count (the day with the highest I(t), found by scanning the returned trajectory), total attack rate ((N - S_final) / N, the classic epidemiological "final size" of an outbreak), and the herd immunity threshold (1 - 1/R0 - only meaningful when R0 > 1, so R0 <= 1 shows "Not needed" instead of a nonsensical negative percentage). The peak is also marked directly on the chart as a separate single-point dataset (a 5th `Chart.js` dataset alongside S/E/I/R), avoiding an external annotation plugin.
+
 ## Running Tests
 
 ```bash

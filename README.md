@@ -6,7 +6,7 @@ A small full-stack toolkit for simulating and calibrating compartmental epidemic
 
 ## What it does
 
-- **Build your own epidemic curve** — move sliders for the transmission rate (β), incubation rate (σ), and recovery rate (γ), and watch a live SEIR simulation update. A banner explains what's happening to R0 as you go, including why the outbreak dies out when R0 < 1.
+- **Build your own epidemic curve** — move sliders for the transmission rate (β), incubation rate (σ), and recovery rate (γ), and watch a live SEIR simulation update. A banner explains what's happening to R0 as you go, including why the outbreak dies out when R0 < 1. Live stat cards summarize the peak infection day/count, the total share of the population ever infected, and the herd immunity threshold, and the peak is marked directly on the chart.
 - **See a real calibrated example** — beta and gamma fitted via `scipy.optimize.curve_fit` against a real 1978 English boarding-school influenza outbreak, plotted against the actual observed case counts.
 
 Try it live at the link above, or run it locally (see [Setup](#setup)) and open `http://127.0.0.1:8000/`.
